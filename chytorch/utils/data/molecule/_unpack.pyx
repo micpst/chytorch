@@ -80,7 +80,7 @@ def unpack(const unsigned char[::1] data not None, unsigned short add_cls, DTYPE
     cdef DTYPE_t d
 
     # read header
-    if data[0] != 2:
+    if data[0] not in (2, 4):
         raise ValueError('invalid pack version')
 
     a, b, c = data[1], data[2], data[3]
@@ -108,15 +108,17 @@ def unpack(const unsigned char[::1] data not None, unsigned short add_cls, DTYPE
         connections[i] = neighbors_count = b & 0x0f
         bonds_count += neighbors_count
 
-        atoms[i] = (data[shift + 3] & 0x7f) + 2
+        atoms[i] = (data[shift + 3] & 0x7f) << 7
+        if data[0] == 4:
+            atoms[i] |= data[shift + 4] + 2
 
-        hydrogens = data[shift + 8] >> 5
+        hydrogens = (data[shift + 9] if data[0] == 4 else data[shift + 8]) >> 5
         if hydrogens != 7:  # hydrogens is not None
             neighbors_count += hydrogens
         if neighbors_count > max_neighbors:
             neighbors_count = max_neighbors
         neighbors[i] = neighbors_count + 2 # neighbors + hydrogens
-        shift += 9
+        shift += 10 if data[0] == 4 else 9
 
     if bonds_count:
         bonds_count /= 2
