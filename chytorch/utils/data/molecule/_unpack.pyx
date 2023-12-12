@@ -33,17 +33,17 @@ ctypedef cnp.int32_t DTYPE_t
 # Format specification::
 #
 # Big endian bytes order
-# 8 bit - 0x02 (current format specification)
+# 8 bit - 0x02 or 0x04 (current format specification)
 # 12 bit - number of atoms
 # 12 bit - cis/trans stereo block size
 #
-# Atom block 9 bytes (repeated):
+# Atom block 9/10 bytes (repeated):
 # 12 bit - atom number
 # 4 bit - number of neighbors
 # 2 bit tetrahedron sign (00 - not stereo, 10 or 11 - has stereo)
 # 2 bit - allene sign
 # 5 bit - isotope (00000 - not specified, over = isotope - common_isotope + 16)
-# 7 bit - atomic number (<=118)
+# 7/15 bit - atomic number (<=118/32767)
 # 32 bit - XY float16 coordinates
 # 3 bit - hydrogens (0-7). Note: 7 == None
 # 4 bit - charge (charge + 4. possible range -4 - 4)
