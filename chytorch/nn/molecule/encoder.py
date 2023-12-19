@@ -40,8 +40,8 @@ class MoleculeEncoder(Module):
     """
     Inspired by https://arxiv.org/pdf/2106.05234.pdf
     """
-    def __init__(self, max_neighbors: int = 14, max_distance: int = 10, d_model: int = 1024, nhead: int = 16,
-                 num_layers: int = 8, dim_feedforward: int = 3072, shared_weights: bool = True,
+    def __init__(self, max_atoms: int = 121, max_neighbors: int = 14, max_distance: int = 10, d_model: int = 1024, 
+                 nhead: int = 16, num_layers: int = 8, dim_feedforward: int = 3072, shared_weights: bool = True,
                  shared_attention_bias: bool = True, dropout: float = 0.1, activation=GELU,
                  layer_norm_eps: float = 1e-5, norm_first: bool = False, post_norm: bool = False,
                  zero_bias: bool = False, perturbation: float = 0.,
@@ -64,7 +64,7 @@ class MoleculeEncoder(Module):
         """
         assert perturbation >= 0, 'zero or positive perturbation expected'
         super().__init__()
-        self.atoms_encoder = Embedding(121, d_model, 0, lora_r=lora_r, lora_alpha=lora_alpha)
+        self.atoms_encoder = Embedding(max_atoms, d_model, 0, lora_r=lora_r, lora_alpha=lora_alpha)
         self.neighbors_encoder = Embedding(max_neighbors + 3, d_model, 0, lora_r=lora_r, lora_alpha=lora_alpha)
 
         self.shared_attention_bias = shared_attention_bias
